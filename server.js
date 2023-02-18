@@ -52,15 +52,11 @@ io.on('connect', (socket) => {
     setUsers(id, userName);
     socket.on('transfer', async({ id, amount }) => {
         const to = users.find(element => element.id === id)
-        const sender = await User.findOne({ id: from }, { balance: 1 });
-        const receiver = await User.findOne({ id: to }, { balance: 1 });
+        const receiver = await User.findOne({ id }, { balance: 1 });
         const receiver_balance = await receiver.balance + amount;
-        const sender_balance = await sender.balance - amount;
-        const res1 = await User.updateOne({ id: from },{ balance: sender_balance });
-        const res2 = await User.updateOne({ id: to },{ balance: receiver_balance });
+        const res2 = await User.updateOne({ id },{ balance: receiver_balance });
         if (to) {
-            const receiver = users.find(element => element.userName === to)
-            receiver ? socket.to(receiver.id).emit('gotMoney'): null ;
+            socket.to(to.id).emit('gotMoney');
         } 
         socket.to(socket.id).emit('sentMoney');
     })
