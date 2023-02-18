@@ -40,6 +40,7 @@ const setUsers = (id, userName) => {
     } else {
         console.log(session);
         users.splice(session, 1);
+        users.push({ id, userName })
     }
 }
 
