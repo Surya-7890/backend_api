@@ -50,8 +50,7 @@ io.on('connect', (socket) => {
     const id = socket.id;
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
-    socket._onclose()
-    socket.on('transfer', async(id, amount) => {
+    socket.on('transfer', async({ id, amount }) => {
         const to = users.find(element => element.id === id)
         const sender = await User.findOne({ id: from }, { balance: 1 });
         const receiver = await User.findOne({ id: to }, { balance: 1 });
