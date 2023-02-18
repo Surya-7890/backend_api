@@ -42,6 +42,7 @@ const setUsers = (id, userName) => {
         users.splice(session, 1);
         users.push({ id, userName })
     }
+    console.log(users)
 }
 
 
@@ -50,6 +51,8 @@ io.on('connect', (socket) => {
     const id = socket.id;
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
+    console.log(userName)
+    socket.emit('users', users);
     socket.on('transfer', async({ id, amount }) => {
         const to = users.find(element => element.id === id)
         const receiver = await User.findOne({ id }, { balance: 1 });
