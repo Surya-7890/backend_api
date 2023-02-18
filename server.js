@@ -30,18 +30,7 @@ const io = new Server(http_server,{
 });
 
 const setUsers = (id, userName) => {
-    const session = users.find((element, index) => {
-        if (element.userName === userName) {
-            return index;
-        }
-    });
-    if (!session) {
-        users.push({ id, userName })
-    } else {
-        console.log(session);
-        users.splice(session, 1);
-        users.push({ id, userName })
-    }
+    users.push({ id, userName })
     console.log(users)
 }
 
