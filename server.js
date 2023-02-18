@@ -47,12 +47,9 @@ const setUsers = (id, userName) => {
 
 
 io.on('connect', (socket) => {
-    console.log(socket.id);
     const id = socket.id;
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
-    console.log(userName)
-    socket.emit('users', users);
     socket.on('transfer', async({ id, amount }) => {
         const to = users.find(element => element.id === id)
         const receiver = await User.findOne({ id }, { balance: 1 });
