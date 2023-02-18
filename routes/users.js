@@ -32,6 +32,9 @@ router.post('/transfer', async(req,res)=>{
         const res2 = await User.updateOne({ id: to },{ balance: receiver_balance });
         io.emit(`reduce`, props={amount, from} );
         io.emit(`add`, props={amount, to} );
+        io.on('orderPlaced', (socket) => {
+            socket.to(socket.id).emit('got', amount);
+        })
         res.json({ res1, res2 });
     } catch (error) {
         res.json({ error });
