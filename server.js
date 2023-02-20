@@ -29,7 +29,7 @@ const io = new Server(http_server,{
 });
 
 const setUsers = async(id, userName) => {
-    const sessionInitiate = await User.findOne({ id: userName }, { sessionId: id });
+    const sessionInitiate = await User.findOneAndUpdate({ id: userName }, { sessionId: id });
 }
 
 
