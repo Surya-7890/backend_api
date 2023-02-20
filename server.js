@@ -30,7 +30,6 @@ const io = new Server(http_server,{
 
 const setUsers = async(id, userName) => {
     const sessionInitiate = await User.findOne({ id: userName }, { sessionId: id });
-    console.log(sessionInitiate);
 }
 
 
@@ -39,14 +38,14 @@ io.on('connect', (socket) => {
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
     socket.on('transfer', async({ id, amount }) => {
+        console.log(id, amount)
+        console.log(socket.id)
         const receiver = await User.findOne({ id }, { balance: 1, sessionId: 1 });
         const receiver_balance = await receiver.balance + amount;
         console.log(receiver);
         const res2 = await User.updateOne({ id },{ balance: receiver_balance });
-        if (to) {
-            receiver.sessionId ? socket.to(receiver.sessionId).emit('gotMoney'): null;
-        } 
-        socket.to(socket.id).emit('sentMoney');
+        receiver.sessionId ? socket.to(receiver.sessionId).emit('gotMoney'): null;
+        io.to(socket.id).emit('sentMoney');
     })
 });
 
