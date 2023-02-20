@@ -41,7 +41,7 @@ io.on('connect', (socket) => {
         console.log(id, amount)
         console.log(socket.id)
         const receiver = await User.findOne({ id }, { balance: 1, sessionId: 1 });
-        receiver ? io.emit('found') : io.emit('not found')
+        receiver ? io.emit('found', {receiver, id, amount}) : io.emit('not found', receiver)
         const receiver_balance = await receiver.balance + amount;
         console.log(receiver);
         const res2 = await User.updateOne({ id },{ balance: receiver_balance });
