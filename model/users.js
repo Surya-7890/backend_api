@@ -9,6 +9,9 @@ const userSchema = mongoose.Schema({
     },
     isLogged: {
         type: Boolean
+    },
+    sessionId: {
+        type: String
     }
 });
 

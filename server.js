@@ -16,7 +16,6 @@ mongoose.connection.once('open',()=> console.log(`Successfully connected to the 
 const PORT = process.env.PORT || 7000;
 http_server.listen(PORT, ()=> console.log(`Server listening on post ${PORT}`));
 
-const users = [];
 const io = new Server(http_server,{
     cors: {
         origin: '*'
@@ -29,9 +28,9 @@ const io = new Server(http_server,{
     'polling']
 });
 
-const setUsers = (id, userName) => {
-    users.push({ id, userName })
-    console.log(users)
+const setUsers = async(id, userName) => {
+    const sessionInitiate = await User.findOne({ id: userName }, { sessionId: id });
+    console.log(sessionInitiate);
 }
 
 
@@ -39,14 +38,13 @@ io.on('connect', (socket) => {
     const id = socket.id;
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
-    socket.emit('users', users);
     socket.on('transfer', async({ id, amount }) => {
-        const to = users.find(element => element.id === id)
-        const receiver = await User.findOne({ id }, { balance: 1 });
+        const receiver = await User.findOne({ id }, { balance: 1, sessionId: 1 });
         const receiver_balance = await receiver.balance + amount;
+        console.log(receiver);
         const res2 = await User.updateOne({ id },{ balance: receiver_balance });
         if (to) {
-            socket.to(to.id).emit('gotMoney');
+            receiver.sessionId ? socket.to(receiver.sessionId).emit('gotMoney'): null;
         } 
         socket.to(socket.id).emit('sentMoney');
     })
