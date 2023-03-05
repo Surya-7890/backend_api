@@ -7,8 +7,8 @@ const maxAge = 7 * 24 * 60 * 60;
 
 router.post('/', async(req,res) => {
     const id = req.body.id;
-    const data = await User.find({ id }, { id: 1 });
-    if (data.length === 0) {
+    const data = await User.findOne({ id }, { id: 1, isLogged: 1 });
+    if (data.length === 0 || !(data.isLogged)) {
         const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
             expiresIn: maxAge
         });
@@ -55,5 +55,9 @@ router.get('/getInfo/:token', async(req,res)=>{
         });
     }
 });
+
+router.post('/logout', async (req, res) => {
+    const { id } = req.body;
+})
 
 module.exports = router;

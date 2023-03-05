@@ -40,11 +40,8 @@ io.on('connect', (socket) => {
     socket.on('transfer', async({ id, amount }) => {
         console.log(id, amount)
         console.log(socket.id)
-        const receiver = await User.findOne({ id }, { balance: 1, sessionId: 1 });
+        const receiver = await User.findOne({ id }, { sessionId: 1 });
         receiver ? io.emit('found', {receiver, id, amount}) : io.emit('not found', receiver)
-        const receiver_balance = await receiver.balance + amount;
-        console.log(receiver);
-        const res2 = await User.updateOne({ id },{ balance: receiver_balance });
         receiver.sessionId ? socket.to(receiver.sessionId).emit('gotMoney'): null;
         io.to(socket.id).emit('sentMoney');
     })
