@@ -38,10 +38,7 @@ io.on('connect', (socket) => {
     const userName = socket.handshake.auth.userName;
     setUsers(id, userName);
     socket.on('transfer', async({ id, amount }) => {
-        console.log(id, amount)
-        console.log(socket.id)
         const receiver = await User.findOne({ id }, { sessionId: 1 });
-        receiver ? io.emit('found', {receiver, id, amount}) : io.emit('not found', receiver)
         receiver.sessionId ? socket.to(receiver.sessionId).emit('gotMoney'): null;
         io.to(socket.id).emit('sentMoney');
     })
